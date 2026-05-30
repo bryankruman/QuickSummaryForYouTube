@@ -1,0 +1,48 @@
+{
+  "manifest_version": 3,
+  "name": "Quick Summary for YouTube™",
+  "version": "1.0.0",
+  "description": "Summarize any YouTube video from a right-click, using YouTube's own 'Ask' AI. Requires 'Ask' (experimental, Premium).",
+  "permissions": [
+    "contextMenus",
+    "scripting",
+    "storage",
+    "tabs"
+  ],
+  "host_permissions": [
+    "*://*.youtube.com/*"
+  ],
+  "background": {
+    "service_worker": "src/background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": ["*://*.youtube.com/*"],
+      "js": ["src/content.js"],
+      "css": ["src/overlay.css"],
+      "run_at": "document_idle"
+    }
+  ],
+  "commands": {
+    "summarize-current": {
+      "suggested_key": { "default": "Alt+Shift+S" },
+      "description": "Summarize the current YouTube video"
+    }
+  },
+  "action": {
+    "default_popup": "src/popup.html",
+    "default_title": "Quick Summary for YouTube™",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "32": "icons/icon32.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
+  },
+  "icons": {
+    "16": "icons/icon16.png",
+    "32": "icons/icon32.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  }
+}

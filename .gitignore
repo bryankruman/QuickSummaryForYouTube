@@ -1,0 +1,10 @@
+# IDE / editor
+.idea/
+.vscode/
+
+# Packaging output (the uploadable ZIP is built, not committed)
+*.zip
+
+# OS cruft
+.DS_Store
+Thumbs.db

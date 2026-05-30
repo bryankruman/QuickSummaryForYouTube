@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <style>
+    :root {
+      --bg: #0f0f0f;
+      --panel: #181818;
+      --line: #303030;
+      --text: #f1f1f1;
+      --muted: #9aa0a6;
+      --accent: #3ea6ff;
+    }
+    * { box-sizing: border-box; }
+    body {
+      width: 340px; margin: 0;
+      font-family: Roboto, Arial, system-ui, sans-serif;
+      background: var(--bg); color: var(--text);
+    }
+
+    /* Header — sparkle mark + name + one-line pitch */
+    header { display: flex; align-items: center; gap: 11px; padding: 16px 16px 14px; border-bottom: 1px solid var(--line); }
+    header .spark { flex: 0 0 auto; display: inline-flex; }
+    header .spark svg { display: block; width: 26px; height: 26px; }
+    header h1 { font-size: 15px; font-weight: 600; margin: 0; line-height: 1.2; }
+    header p { font-size: 11px; color: var(--muted); margin: 3px 0 0; line-height: 1.4; }
+
+    /* Requirement callout — makes the Premium / experimental "Ask" dependency clear up front */
+    .callout { display: flex; gap: 9px; padding: 12px 16px; background: #181818; border-bottom: 1px solid var(--line); }
+    .callout svg { flex: 0 0 auto; width: 16px; height: 16px; margin-top: 1px; }
+    .callout p { margin: 0; font-size: 11.5px; line-height: 1.5; color: var(--muted); }
+    .callout strong { color: var(--text); font-weight: 600; }
+
+    section { padding: 14px 16px; border-bottom: 1px solid var(--line); }
+    .label { font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); margin: 0 0 11px; font-weight: 600; }
+
+    /* Auto-summarize toggle */
+    .toggle { display: flex; align-items: flex-start; gap: 10px; cursor: pointer; }
+    .toggle input { margin: 1px 0 0; width: 16px; height: 16px; accent-color: var(--accent); cursor: pointer; flex: 0 0 auto; }
+    .toggle-text { display: flex; flex-direction: column; gap: 3px; }
+    .toggle-title { font-size: 13px; font-weight: 600; }
+    .toggle-desc { font-size: 11px; color: var(--muted); line-height: 1.45; }
+
+    /* How-to tips */
+    ul.tips { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 9px; }
+    ul.tips li { font-size: 12px; color: #cfcfcf; line-height: 1.45; padding-left: 17px; position: relative; }
+    ul.tips li::before { content: "›"; position: absolute; left: 3px; top: -1px; color: var(--accent); font-weight: 700; font-size: 14px; }
+    ul.tips strong { color: var(--text); font-weight: 600; }
+    kbd { font: 600 11px Roboto, Arial, sans-serif; background: #272727; border: 1px solid #3a3a3a; border-bottom-width: 2px; border-radius: 4px; padding: 1px 5px; color: #f1f1f1; }
+
+    /* Action buttons */
+    .btn {
+      all: unset; box-sizing: border-box; display: flex; align-items: center; justify-content: space-between; gap: 10px;
+      width: 100%; cursor: pointer; font-size: 13px; padding: 10px 12px; border-radius: 8px;
+      background: var(--panel); border: 1px solid var(--line); color: var(--text);
+    }
+    .btn + .btn { margin-top: 8px; }
+    .btn:hover { background: #232323; }
+    .btn .count { font-size: 11px; color: var(--muted); flex: 0 0 auto; }
+    .btn.danger:hover { background: #2a1818; border-color: #5a2a2a; color: #ff9a9a; }
+    .btn:disabled { opacity: 0.45; cursor: default; }
+    .btn:disabled:hover { background: var(--panel); border-color: var(--line); color: var(--text); }
+
+    footer { padding: 11px 16px 13px; }
+    footer .foot-row { display: flex; align-items: center; justify-content: space-between; }
+    footer .ver { font-size: 10px; color: #666; }
+    footer a { font-size: 11px; color: var(--accent); text-decoration: none; cursor: pointer; }
+    footer a:hover { text-decoration: underline; }
+    footer .disclaimer { margin: 9px 0 0; font-size: 10px; color: #666; line-height: 1.4; }
+  </style>
+</head>
+<body>
+  <header>
+    <span class="spark">
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <defs><linearGradient id="spark" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0" stop-color="#3ea6ff"></stop>
+          <stop offset="0.55" stop-color="#7e5cde"></stop>
+          <stop offset="1" stop-color="#e26296"></stop>
+        </linearGradient></defs>
+        <path fill="url(#spark)" d="M12 2l1.8 6.2L20 10l-6.2 1.8L12 18l-1.8-6.2L4 10l6.2-1.8z"></path>
+      </svg>
+    </span>
+    <div>
+      <h1>Quick Summary for YouTube™</h1>
+      <p>Instant AI summaries from YouTube's own “Ask”.</p>
+    </div>
+  </header>
+
+  <div class="callout">
+    <svg viewBox="0 0 24 24" fill="none" stroke="#3ea6ff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <circle cx="12" cy="12" r="10"></circle>
+      <line x1="12" y1="16" x2="12" y2="12"></line>
+      <line x1="12" y1="8" x2="12.01" y2="8"></line>
+    </svg>
+    <p>Uses YouTube's built-in <strong>“Ask”</strong> AI — an experimental feature currently limited to <strong>YouTube Premium</strong> members and still rolling out. If a video has no “Ask”, it can't be summarized.</p>
+  </div>
+
+  <section>
+    <p class="label">Settings</p>
+    <label class="toggle">
+      <input type="checkbox" id="autoToggle" />
+      <span class="toggle-text">
+        <span class="toggle-title">Auto-summarize videos</span>
+        <span class="toggle-desc">Summarize each watch page as it loads, and show your saved summary instantly on return visits.</span>
+      </span>
+    </label>
+  </section>
+
+  <section>
+    <p class="label">How to use</p>
+    <ul class="tips">
+      <li>Right-click any thumbnail → <strong>Quick Summary</strong>.</li>
+      <li>On a video, press <kbd>Alt</kbd> <kbd>Shift</kbd> <kbd>S</kbd> to summarize it.</li>
+      <li>Choose <strong>Ask a question</strong> to ask anything about a video.</li>
+    </ul>
+  </section>
+
+  <section>
+    <p class="label">Storage</p>
+    <button class="btn danger" id="clearCache">
+      <span class="lbl">Clear cached summaries</span>
+      <span class="count" id="cacheCount"></span>
+    </button>
+    <button class="btn" id="resetPopup">
+      <span class="lbl">Reset popup size &amp; location</span>
+    </button>
+  </section>
+
+  <footer>
+    <div class="foot-row">
+      <span class="ver" id="ver"></span>
+      <a id="shortcuts">Change keyboard shortcut</a>
+    </div>
+    <p class="disclaimer">Not affiliated with, or endorsed by, YouTube or Google.</p>
+  </footer>
+
+  <script src="popup.js"></script>
+</body>
+</html>
