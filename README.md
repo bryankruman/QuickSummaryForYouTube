@@ -1,4 +1,4 @@
-# Quick Summary for YouTube™
+# Quick Summary for YouTube™ (Chrome Extension)
 
 Get a YouTube video's summary from a **right‑click on its thumbnail** — powered by
 YouTube's *own* built‑in **“Ask”** AI, so you never have to open the video.
