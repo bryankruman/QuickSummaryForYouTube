@@ -464,6 +464,9 @@ async function askDriver(opts) {
   const html = buildAnswerHtml(root, opts.question);
   const text = html ? htmlToText(html) : clean((root && root.innerText) || "", opts.question);
   if (!html && !text) return { ok: false, reason: "no-answer" };
+  // Don't surface a capture that is nothing but YouTube's suggested questions as if
+  // it were the summary — report it missing so the user retries (or sees the error).
+  if (isOnlySuggestions(text)) return { ok: false, reason: "no-answer" };
   return { ok: true, text, html, title: (document.title || "").replace(/\s*-\s*YouTube\s*$/, "") };
 
   // --- helpers -----------------------------------------------------------
@@ -471,9 +474,21 @@ async function askDriver(opts) {
   // input is present. Used for freeform questions and as the summarize fallback
   // when YouTube offers no suggested prompt chip.
   async function typePrompt(text) {
+    // Target the Ask conversation box specifically. We must NOT fall back to the
+    // page's Search box: it's the first text input in the DOM, so a naive
+    // querySelector grabs it, and the Enter we dispatch below would submit a
+    // search — navigating the tab to youtube.com/results with our prompt as the
+    // query. askInput() prefers an "ask"-labelled box; the extra guard makes sure
+    // we never type into anything that looks like search, even as a last resort.
+    const isSearchBox = (el) => {
+      const s = (((el.getAttribute && el.getAttribute("placeholder")) || "") + " " +
+                 ((el.getAttribute && el.getAttribute("aria-label")) || "") + " " +
+                 (el.id || "") + " " + (el.name || "")).toLowerCase();
+      return /search/.test(s);
+    };
     const input = await waitFor(() => {
-      const el = document.querySelector('textarea, input[type="text"], [contenteditable="true"]');
-      return el && visible(el) ? el : null;
+      const el = askInput();
+      return el && visible(el) && !isSearchBox(el) ? el : null;
     }, 6000);
     if (!input) return false;
     input.focus();
@@ -560,9 +575,32 @@ async function askDriver(opts) {
       if (el.querySelector('p, li, yt-formatted-string')) continue; // leaf blocks only (no double count)
       if (el.closest(CLICK_SEL)) continue;                          // skip chips/suggestions/links
       const t = (el.innerText || "").replace(/\s+/g, " ").trim();
-      if (t.length >= 25 && /[.!?:]/.test(t) && !CHROME_RE.test(t)) len += t.length;
+      if (t.length < 25 || !/[.!?:]/.test(t) || CHROME_RE.test(t)) continue;
+      if (isSuggestionLine(t)) continue; // suggested-question chips aren't answer prose
+      len += t.length;
     }
     return len;
+  }
+
+  // A short, single interrogative line — the shape of YouTube's suggested prompt /
+  // follow-up question chips ("Why is wet concrete dangerous?"). Used to keep them
+  // out of the answer score, and to detect a capture that is nothing BUT
+  // suggestions. The trailing-punctuation check (no '.', '!' or ':' before the
+  // final '?') keeps a real multi-sentence paragraph that happens to end in a
+  // question from being misclassified as a chip.
+  function isSuggestionLine(t) {
+    const s = (t || "").replace(/\s+/g, " ").trim();
+    return s.length > 0 && s.length <= 120 && /\?$/.test(s) &&
+           s.split(" ").length <= 16 && !/[.!:]/.test(s.slice(0, -1));
+  }
+
+  // True when the captured "answer" is really just a list of suggested questions
+  // (the answer never streamed, or the locator missed it). At least two question
+  // lines and nothing else — a genuine summary always carries declarative prose.
+  function isOnlySuggestions(text) {
+    const lines = String(text || "").split("\n").map((l) => l.trim()).filter(Boolean);
+    if (lines.length < 2) return false;
+    return lines.every(isSuggestionLine);
   }
 
   // Locate the element that actually holds the streamed answer. Anchor on the Ask
